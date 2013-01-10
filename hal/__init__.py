@@ -7,6 +7,8 @@ try:
 except ImportError:
     import simplejson as json
 
+from uritemplate import expand
+
 from copy import deepcopy
 
 VALID_LINK_ATTRS = ['templated', 'type', 'name', 'profile', 'title',
@@ -33,6 +35,22 @@ class HalDocument(object):
         Dump the structure of the document as JSON.
         """
         return json.dumps(self.structure)
+
+    def get_curies(self):
+        """
+        Get a mapping of curies to URIs.
+        """
+        curies = {}
+        try:
+            curie_links = self.structure['_links']['curie']
+            if not hasattr(curie_links, 'append'):
+                curie_links = [curie_links]
+            for link in curie_links:
+                curies[link['name']] = link['href']
+        except KeyError:
+            pass
+        return curies
+
 
     @classmethod
     def from_python(cls, structure):
@@ -76,7 +94,7 @@ class Links(object):
     def add(self, *links):
         """
         Add some link. For a new link, add it singular. If
-        there is a second of the same rel, become plurar
+        there is a second of the same rel, become plural
         (that is, a list).
         """
         for link in links:
@@ -106,3 +124,21 @@ class Link(object):
             if key in VALID_LINK_ATTRS:
                 result[key] = self.kwargs[key]
         return result
+
+
+class Resolver(object):
+    """
+    Resolve curry links.
+    """
+
+    def __init__(self, curie_map):
+        self.map = curie_map
+
+    def expand(self, link):
+        if ':' in link:
+            (name, rel) = link.split(':', 1)
+            try:
+                return expand(self.map[name], {'rel': rel})
+            except KeyError:
+                pass
+        return link

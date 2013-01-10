@@ -1,5 +1,5 @@
 
-from hal import HalDocument
+from hal import HalDocument, Resolver
 
 import json
 from pprint import pprint
@@ -26,3 +26,33 @@ def test_simple_consumption():
     assert info['_links'] == data['_links']
     assert info['title'] == data['title']
     assert info['_embedded'] == data['_embedded']
+
+
+def test_handle_curie():
+    data = {
+            '_links': {
+                'self': {'href': '/hi'},
+                'curie': {
+                    'href': 'http://example.com/barnacle/{rel}',
+                    'name': 'barnacle',
+                    'templated': True
+                },
+                'barnacle:shell': {'href': '/some/path'}
+            },
+            '_embedded': {
+                'barnacle:cow': [
+                    {'name': 'how'},
+                    {'name': 'now'},
+                    {'name': 'brown'}
+                ]
+            }
+    }
+
+    doc = HalDocument.from_python(data)
+    curies = doc.get_curies()
+
+    assert 'barnacle' in curies
+
+    resolver = Resolver(curies)
+
+    assert resolver.expand('barnacle:cow') == 'http://example.com/barnacle/cow'
