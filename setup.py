@@ -1,7 +1,7 @@
 # YOU NEED TO EDIT THESE
 AUTHOR = 'Chris Dent'
 AUTHOR_EMAIL = 'cdent@peermore.com'
-NAME = 'hal'
+NAME = 'PythonHAL'
 DESCRIPTION = 'HAL Composer and Consumer'
 VERSION = '0.1'
 
