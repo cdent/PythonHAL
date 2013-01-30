@@ -1,5 +1,5 @@
 
-from hal import HalDocument, Resolver
+from simplehal import HalDocument, Resolver
 
 import json
 from pprint import pprint
@@ -26,6 +26,11 @@ def test_simple_consumption():
     assert info['_links'] == data['_links']
     assert info['title'] == data['title']
     assert info['_embedded'] == data['_embedded']
+
+    assert doc.links == data['_links']
+    assert doc.links == info['_links']
+
+    assert doc.get_data('cow') == data['_embedded']['cow']
 
 
 def test_handle_curie():

@@ -1,5 +1,5 @@
 
-from hal import HalDocument, Links, Link
+from simplehal import HalDocument, Links, Link
 
 import json
 

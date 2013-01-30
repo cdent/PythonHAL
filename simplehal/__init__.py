@@ -51,6 +51,31 @@ class HalDocument(object):
             pass
         return curies
 
+    def get_data(self, data_type):
+        """
+        Return data. First look in embeded, then the rest of the
+        structure. Should we append instead of exclusive here?
+        """
+        try:
+            return self.structure['_embedded'][data_type]
+        except KeyError:
+            return self.structure[data_type]
+
+    @property
+    def links(self):
+        """
+        Accessor for the links. Read only.
+        """
+        return self.structure['_links']
+
+    @classmethod
+    def from_json(cls, input_string):
+        """
+        Create a new document from provided input string.
+        That string should be JSON.
+        """
+        info = json.loads(input_string)
+        return cls.from_python(info)
 
     @classmethod
     def from_python(cls, structure):
@@ -74,11 +99,14 @@ class HalDocument(object):
                 del target['href']
                 links.add(Link(rel, href, **target))
 
-        embedded = structure['_embedded']
+        if '_links' in structure:
+            del structure['_links']
 
-        # cleanup
-        del structure['_links']
-        del structure['_embedded']
+        try:
+            embedded = structure['_embedded']
+            del structure['_embedded']
+        except KeyError:
+            embedded = None
 
         return cls(links, data=structure, embed=embedded)
 
