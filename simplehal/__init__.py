@@ -51,15 +51,26 @@ class HalDocument(object):
             pass
         return curies
 
-    def get_data(self, data_type):
+    def get_data(self, data_type=None):
         """
         Return data. First look in embeded, then the rest of the
         structure. Should we append instead of exclusive here?
         """
-        try:
-            return self.structure['_embedded'][data_type]
-        except KeyError:
-            return self.structure[data_type]
+        if data_type:
+            try:
+                return self.structure['_embedded'][data_type]
+            except KeyError:
+                return self.structure[data_type]
+        else:
+            data = {}
+            for item in self.structure.keys():
+                if item not in ['_links', '_embedded']:
+                    data[item] = self.structure[item]
+            try:
+                data['_embedded'] = self.structure['_embedded']
+            except KeyError:
+                pass
+            return data
 
     @property
     def links(self):
