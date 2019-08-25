@@ -37,7 +37,7 @@ def test_handle_curie():
     data = {
             '_links': {
                 'self': {'href': '/hi'},
-                'curie': {
+                'curies': {
                     'href': 'http://example.com/barnacle/{rel}',
                     'name': 'barnacle',
                     'templated': True
