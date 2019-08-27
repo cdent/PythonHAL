@@ -42,7 +42,7 @@ class HalDocument(object):
         """
         curies = {}
         try:
-            curie_links = self.structure['_links']['curie']
+            curie_links = self.structure['_links']['curies']
             if not hasattr(curie_links, 'append'):
                 curie_links = [curie_links]
             for link in curie_links:
