@@ -167,7 +167,7 @@ class Link(object):
 
 class Resolver(object):
     """
-    Resolve curry links.
+    Resolve curie links.
     """
 
     def __init__(self, curie_map):
